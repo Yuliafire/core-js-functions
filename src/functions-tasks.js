@@ -175,7 +175,6 @@ function retry(func, attempts) {
  * <function name>(<arg1>, <arg2>,...,<argN>) starts
  * <function name>(<arg1>, <arg2>,...,<argN>) ends
  *
- *
  * @param {Function} func
  * @param {Function} logFunc - function to output log with single string argument
  * @return {Function}
@@ -190,7 +189,18 @@ function retry(func, attempts) {
  * cos(3.141592653589793) ends
  *
  */
-// function logger(func, logFunc) {}
+function logger(func, logFunc) {
+  function b(...args) {
+    const log = `${func.name}(${JSON.stringify(args).slice(1, -1)})`;
+
+    logFunc(`${log} starts`);
+    const result = func(...args);
+    logFunc(`${log} ends`);
+
+    return result;
+  }
+  return b;
+}
 
 /**
  * Return the function with partial applied arguments
@@ -229,12 +239,12 @@ function partialUsingArguments(fn, ...args1) {
  *   getId10() => 11
  */
 function getIdGeneratorFunction(startFrom) {
-  let currentId = startFrom;
-
-  return function idGen() {
+  let currentId = startFrom - 1;
+  function idGen() {
     currentId += 1;
     return currentId;
-  };
+  }
+  return idGen;
 }
 
 module.exports = {
@@ -245,7 +255,7 @@ module.exports = {
   getPolynom,
   memoize,
   retry,
-  // logger,
+  logger,
   partialUsingArguments,
   getIdGeneratorFunction,
 };
