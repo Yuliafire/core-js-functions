@@ -12,18 +12,14 @@
  * Returns the name of the current function.
  *
  * @return {string} - The name of the current function.
- *
- * @example
- *   getCurrentFunctionName() => 'getCurrentFunctionName'
- *
  */
+
 function getCurrentFunctionName() {
   const error = new Error();
-  const { stack } = error;
-  const stackLines = stack.split('\n');
+  const stackLines = error.stack.split('\n');
   const functionLine = stackLines[1].trim();
-  const functionName = functionLine.split(' ')[1] || 'anonymous';
-  return functionName;
+  const match = functionLine.match(/at ([^\s(]+)/);
+  return match ? match[1].split('.').pop() : 'anonymous';
 }
 
 /**
